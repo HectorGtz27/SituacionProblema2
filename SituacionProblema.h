@@ -6,31 +6,40 @@
 
 class ShipRecord {
 public:
-    // dejalo asi, no lo cambies
     std::string fecha;
-    std::string hora;
     char punto_entrada;
     std::string ubi;
+    ShipRecord* next;
+
+    ShipRecord(const std::string& _fecha, char _punto_entrada, const std::string& _ubi)
+        : fecha(_fecha), punto_entrada(_punto_entrada), ubi(_ubi), next(nullptr) {}
 };
 
-class Node {
+class ShipRecordList {
 public:
-    ShipRecord data;
-    Node* link;
-};
+    ShipRecord* head;
+    ShipRecord* tail;
 
-typedef Node* nodePtr;
+    ShipRecordList() : head(nullptr), tail(nullptr) {}
+
+    void append(const std::string& fecha, char punto_entrada, const std::string& ubi) {
+        ShipRecord* newNode = new ShipRecord(fecha, punto_entrada, ubi);
+        if (head == nullptr) {
+            head = tail = newNode;
+        }
+        else {
+            tail->next = newNode;
+            tail = newNode;
+        }
+    }
+};
 
 bool compareRecords(const ShipRecord& a, const ShipRecord& b);
 
-nodePtr append(nodePtr head, const ShipRecord& data);
+void processRecords(ShipRecord* head, const std::string& serieABuscar, std::map<std::string, std::pair<int, int>>& mesPorMes);
 
-nodePtr merge(nodePtr left, nodePtr right);
+void deleteList(ShipRecord*& head);
 
-nodePtr mergeSort(nodePtr head);
+ShipRecord* mergeSort(ShipRecord* head);
 
-nodePtr sortList(nodePtr head);
-
-void processRecords(nodePtr head, const std::string& serieABuscar, std::map<std::string, std::pair<int, int>>& mesPorMes);
-
-void deleteList(nodePtr& head);
+ShipRecordList sortList(ShipRecordList& list);
