@@ -139,3 +139,28 @@ bool binarySearch(ShipRecord* head, const std::string& targetSerie) {
 
     return false;
 }
+
+void ListaEnlazada::imprimirCantidadEntradasPorMes() {
+    // Implementación de la función imprimirCantidadEntradasPorMes
+    std::map<std::string, std::pair<int, int>> cantidadPorMes;
+    Nodo* actual = cabeza;
+    while (actual) {
+        // Extraer mes y año de la fecha
+        std::string fecha = actual->fecha;
+        std::string mes = fecha.substr(3, 2);
+        std::string anio = fecha.substr(6, 4);
+
+        // Incrementar la cantidad de entrada de buques de esa serie en ese mes
+        cantidadPorMes[mes + " " + anio].first += actual->valor1;
+        cantidadPorMes[mes + " " + anio].second += actual->valor2;
+
+        actual = actual->siguiente;
+    }
+
+    // Imprimir la cantidad de entrada de buques por mes
+    std::cout << "Cantidad de Entradas de Buques por Mes:" << std::endl;
+    std::cout << "M   A  CM CR" << std::endl;
+    for (const auto& entry : cantidadPorMes) {
+        std::cout << entry.first << " " << entry.second.first << " " << entry.second.second << std::endl;
+    }
+}
