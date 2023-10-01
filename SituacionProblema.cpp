@@ -1,4 +1,3 @@
-// SituacionProblema.cpp
 #define _CRT_SECURE_NO_WARNINGS
 #include "SituacionProblema.h"
 #include <iostream>
@@ -34,7 +33,7 @@ void processRecords(ShipRecord* head, const std::string& serieABuscar, std::map<
 
     while (current != nullptr) {
         if (current->ubi.substr(0, 3) == serieABuscar) {
-            std::string fechaCompleta = current->fecha; // Utiliza la fecha completa
+            std::string fechaCompleta = current->fecha;
             if (mesPorMes.find(fechaCompleta) == mesPorMes.end()) {
                 mesPorMes[fechaCompleta] = std::make_pair(0, 0);
             }
@@ -114,10 +113,28 @@ ShipRecord* mergeSort(ShipRecord* head) {
 ShipRecordList sortList(ShipRecordList& list) {
     ShipRecordList result;
     result.head = mergeSort(list.head);
-    // Find the new tail
     result.tail = list.head;
     while (result.tail != nullptr && result.tail->next != nullptr) {
         result.tail = result.tail->next;
     }
     return result;
+}
+
+bool binarySearch(ShipRecord* head, const std::string& targetSerie) {
+    ShipRecord* current = head;
+    while (current != nullptr) {
+        std::string currentSerie = current->ubi.substr(0, 3);
+        int compareResult = targetSerie.compare(currentSerie);
+
+        if (compareResult == 0) {
+            return true;
+        }
+        else if (compareResult < 0) {
+            return false;
+        }
+
+        current = current->next;
+    }
+
+    return false;
 }
