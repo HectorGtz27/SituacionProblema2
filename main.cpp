@@ -1,4 +1,3 @@
-// main.cpp
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -47,23 +46,22 @@ int main() {
     mediterraneoList = sortList(mediterraneoList);
     marRojoList = sortList(marRojoList);
 
+
     // Imprimir las listas ordenadas
     cout << "---------------------------------" << endl;
     cout << "Lista ordenada del mediterraneo:" << endl;
     cout << "---------------------------------" << endl;
     ShipRecord* current = mediterraneoList.head;
-    while(current != nullptr) {
+    while (current != nullptr) {
         cout << current->ubi << " " << current->fecha << " " << current->punto_entrada << endl;
-		current = current->next;
-	}
-
+        current = current->next;
+    }
     cout << endl;
 
     cout << "---------------------------------" << endl;
     cout << "Lista ordenada del mar rojo:" << endl;
     cout << "---------------------------------" << endl;
     current = marRojoList.head;
-
     while (current != nullptr) {
         cout << current->ubi << " " << current->fecha << " " << current->punto_entrada << endl;
         current = current->next;
@@ -75,15 +73,25 @@ int main() {
 
     map<string, pair<int, int>> mesPorMes;
 
-    processRecords(mediterraneoList.head, serieABuscar, mesPorMes);
-    processRecords(marRojoList.head, serieABuscar, mesPorMes);
+    // Verificar si la serie a buscar existe usando búsqueda binaria
+    bool foundInMediterraneo = binarySearch(mediterraneoList.head, serieABuscar);
+    bool foundInMarRojo = binarySearch(marRojoList.head, serieABuscar);
 
-    // Imprimir el mapa con la fecha que se encontró y la cantidad de entradas por cada punto de entrada
-    cout << "---------------------------------" << endl;
-    cout << "Mapa con la fecha que se encontro y la cantidad de entradas por cada punto de entrada:" << endl;
-    cout << "---------------------------------" << endl;
-    for (const auto& entry : mesPorMes) {
-        cout << entry.first << " " << entry.second.first << " " << entry.second.second << endl;
+    if (foundInMediterraneo || foundInMarRojo) {
+        // Si se encontró la serie, procesar los registros
+        processRecords(mediterraneoList.head, serieABuscar, mesPorMes);
+        processRecords(marRojoList.head, serieABuscar, mesPorMes);
+
+        // Imprimir el mapa con la fecha que se encontró y la cantidad de entradas por cada punto de entrada
+        cout << "---------------------------------" << endl;
+        cout << "Mapa con la fecha que se encontro y la cantidad de entradas por cada punto de entrada:" << endl;
+        cout << "---------------------------------" << endl;
+        for (const auto& entry : mesPorMes) {
+            cout << entry.first << " " << entry.second.first << " " << entry.second.second << endl;
+        }
+    }
+    else {
+        cout << "La serie especificada -> " << serieABuscar  << " no se encontro en los registros." << endl;
     }
 
     // Liberar la memoria de las listas
