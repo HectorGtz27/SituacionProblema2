@@ -3,6 +3,7 @@
 
 #include <string>
 #include <map>
+#include <iostream>
 
 class ShipRecord {
 public:
@@ -34,6 +35,44 @@ public:
     }
 };
 
+//-------------------------------------------------------------------------------------------------------
+
+struct Nodo {
+    std::string fecha;
+    std::string hora;
+    int valor1;
+    int valor2;
+    Nodo* siguiente;
+
+    Nodo(const std::string& fecha, int valor1, int valor2)
+        : fecha(fecha), valor1(valor1), valor2(valor2), siguiente(nullptr) {}
+};
+
+class ListaEnlazada {
+private:
+    Nodo* cabeza;
+
+public:
+    ListaEnlazada() : cabeza(nullptr) {}
+
+    void agregar(const std::string& fecha, int valor1, int valor2) {
+        Nodo* nuevoNodo = new Nodo(fecha, valor1, valor2);
+        nuevoNodo->siguiente = cabeza;
+        cabeza = nuevoNodo;
+    }
+
+    void imprimirCantidadEntradasPorMes(); // Declaración de la función
+
+    ~ListaEnlazada() {
+        while (cabeza) {
+            Nodo* temp = cabeza;
+            cabeza = cabeza->siguiente;
+            delete temp;
+        }
+    }
+};
+
+//-------------------------------------------------------------------------------------------------------
 
 bool compareRecords(const ShipRecord& a, const ShipRecord& b);
 
