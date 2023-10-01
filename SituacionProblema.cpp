@@ -1,15 +1,12 @@
-//SituacionProblema.cpp
+// SituacionProblema.cpp
 #define _CRT_SECURE_NO_WARNINGS
 #include "SituacionProblema.h"
 #include <iostream>
 #include <fstream>
 #include <string>
 #include <sstream>
-using namespace std;
-
 
 bool compareRecords(const ShipRecord& a, const ShipRecord& b) {
-    // Utiliza sscanf para descomponer las fechas en año, mes y día
     int yearA, monthA, dayA;
     int yearB, monthB, dayB;
 
@@ -18,49 +15,50 @@ bool compareRecords(const ShipRecord& a, const ShipRecord& b) {
 
     if (a.ubi == b.ubi) {
         if (yearA != yearB) {
-            return yearA < yearB; // Compara los años
+            return yearA < yearB;
         }
         else if (monthA != monthB) {
-            return monthA < monthB; // Si los años son iguales, compara los meses
+            return monthA < monthB;
         }
         else {
-            return dayA < dayB; // Si los años y meses son iguales, compara los días
+            return dayA < dayB;
         }
-	}
+    }
     else {
-		return a.ubi < b.ubi; // Si las ubicaciones son diferentes, compara las ubicaciones
-	}
-    
+        return a.ubi < b.ubi;
+    }
 }
 
+void processRecords(ShipRecord* head, const std::string& serieABuscar, std::map<std::string, std::pair<int, int>>& mesPorMes) {
+    ShipRecord* current = head;
 
-
-
-
-
-
-nodePtr append(nodePtr head, const ShipRecord& data) {
-    nodePtr newNode = new Node;
-    newNode->data = data;
-    newNode->link = nullptr;
-
-    if (head == nullptr) {
-        head = newNode;
-        return head;
+    while (current != nullptr) {
+        if (current->ubi.substr(0, 3) == serieABuscar) {
+            std::string fechaCompleta = current->fecha; // Utiliza la fecha completa
+            if (mesPorMes.find(fechaCompleta) == mesPorMes.end()) {
+                mesPorMes[fechaCompleta] = std::make_pair(0, 0);
+            }
+            if (current->punto_entrada == 'M') {
+                mesPorMes[fechaCompleta].first++;
+            }
+            else if (current->punto_entrada == 'R') {
+                mesPorMes[fechaCompleta].second++;
+            }
+        }
+        current = current->next;
     }
-
-    nodePtr current = head;
-    while (current->link != nullptr) {
-        current = current->link;
-    }
-
-    current->link = newNode;
-
-    return head;
 }
 
-nodePtr merge(nodePtr left, nodePtr right) {
-    nodePtr result = nullptr;
+void deleteList(ShipRecord*& head) {
+    while (head != nullptr) {
+        ShipRecord* temp = head;
+        head = head->next;
+        delete temp;
+    }
+}
+
+ShipRecord* merge(ShipRecord* left, ShipRecord* right) {
+    ShipRecord* result = nullptr;
 
     if (left == nullptr) {
         return right;
@@ -69,43 +67,43 @@ nodePtr merge(nodePtr left, nodePtr right) {
         return left;
     }
 
-    if (compareRecords(left->data, right->data)) {
+    if (compareRecords(*left, *right)) {
         result = left;
-        result->link = merge(left->link, right);
+        result->next = merge(left->next, right);
     }
     else {
         result = right;
-        result->link = merge(left, right->link);
+        result->next = merge(left, right->next);
     }
 
     return result;
 }
 
-nodePtr getMiddle(nodePtr head) {
+ShipRecord* getMiddle(ShipRecord* head) {
     if (head == nullptr) {
         return head;
     }
 
-    nodePtr slow = head;
-    nodePtr fast = head;
+    ShipRecord* slow = head;
+    ShipRecord* fast = head;
 
-    while (fast->link != nullptr && fast->link->link != nullptr) {
-        slow = slow->link;
-        fast = fast->link->link;
+    while (fast->next != nullptr && fast->next->next != nullptr) {
+        slow = slow->next;
+        fast = fast->next->next;
     }
 
     return slow;
 }
 
-nodePtr mergeSort(nodePtr head) {
-    if (head == nullptr || head->link == nullptr) {
+ShipRecord* mergeSort(ShipRecord* head) {
+    if (head == nullptr || head->next == nullptr) {
         return head;
     }
 
-    nodePtr middle = getMiddle(head);
-    nodePtr left = head;
-    nodePtr right = middle->link;
-    middle->link = nullptr;
+    ShipRecord* middle = getMiddle(head);
+    ShipRecord* left = head;
+    ShipRecord* right = middle->next;
+    middle->next = nullptr;
 
     left = mergeSort(left);
     right = mergeSort(right);
@@ -113,35 +111,13 @@ nodePtr mergeSort(nodePtr head) {
     return merge(left, right);
 }
 
-void processRecords(nodePtr head, const std::string& serieABuscar, std::map<std::string, std::pair<int, int>>& mesPorMes) {
-    nodePtr current = head;
-
-    while (current != nullptr) {
-        if (current->data.ubi.substr(0, 3) == serieABuscar) {
-			std::string mes = current->data.fecha.substr(0, 7);
-            if (mesPorMes.find(mes) == mesPorMes.end()) {
-				mesPorMes[mes] = std::make_pair(0, 0);
-			}
-            if (current->data.punto_entrada == 'M') {
-				mesPorMes[mes].first++;
-			}
-            else if (current->data.punto_entrada == 'R') {
-				mesPorMes[mes].second++;
-			}
-		}
-		current = current->link;
-	}
-}
-
-void deleteList(nodePtr& head) {
-    while (head != nullptr) {
-        nodePtr temp = head;
-        head = head->link;
-        delete temp;
+ShipRecordList sortList(ShipRecordList& list) {
+    ShipRecordList result;
+    result.head = mergeSort(list.head);
+    // Find the new tail
+    result.tail = list.head;
+    while (result.tail != nullptr && result.tail->next != nullptr) {
+        result.tail = result.tail->next;
     }
-}
-
-
-nodePtr sortList(nodePtr head) {
-    return mergeSort(head); // Llama a mergeSort para ordenar la lista
+    return result;
 }
