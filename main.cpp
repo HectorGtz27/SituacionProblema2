@@ -1,8 +1,9 @@
-//main.cpp
+// main.cpp
 #include <iostream>
 #include <fstream>
 #include <string>
 #include <sstream>
+#include <map>
 #include "SituacionProblema.h"
 
 using namespace std;
@@ -19,8 +20,8 @@ int main() {
         return 1;
     }
 
-    nodePtr mediterraneoList = nullptr;
-    nodePtr marRojoList = nullptr;
+    ShipRecordList mediterraneoList;
+    ShipRecordList marRojoList;
 
     string fecha, hora, linea;
 
@@ -34,16 +35,12 @@ int main() {
         string ubi;
         ss >> ubi;
 
-        ShipRecord record;
-        record.fecha = fecha + " " + hora;
-        record.punto_entrada = puntoEntrada;
-        record.ubi = ubi;
-
+        string recordFecha = fecha + " " + hora;
         if (puntoEntrada == 'M') {
-            mediterraneoList = append(mediterraneoList, record);
+            mediterraneoList.append(recordFecha, puntoEntrada, ubi);
         }
         else if (puntoEntrada == 'R') {
-            marRojoList = append(marRojoList, record);
+            marRojoList.append(recordFecha, puntoEntrada, ubi);
         }
     }
 
@@ -54,21 +51,22 @@ int main() {
     cout << "---------------------------------" << endl;
     cout << "Lista ordenada del mediterraneo:" << endl;
     cout << "---------------------------------" << endl;
-    nodePtr current = mediterraneoList;
-    while (current != nullptr) {
-        //cout << current->data.fecha << " " << current->data.punto_entrada << " " << current->data.ubi << endl;
-        cout << current->data.ubi << " " << current->data.fecha << " " << current->data.punto_entrada << " " << current->data.hora << endl;
-        current = current->link;
-    }
+    ShipRecord* current = mediterraneoList.head;
+    while(current != nullptr) {
+        cout << current->ubi << " " << current->fecha << " " << current->punto_entrada << endl;
+		current = current->next;
+	}
+
     cout << endl;
 
     cout << "---------------------------------" << endl;
     cout << "Lista ordenada del mar rojo:" << endl;
     cout << "---------------------------------" << endl;
-    nodePtr current2 = marRojoList;
-    while (current2 != nullptr) {
-        cout << current2->data.ubi << " " << current2->data.fecha << " " << current2->data.punto_entrada << " " << current2->data.hora << endl;
-        current2 = current2->link;
+    current = marRojoList.head;
+
+    while (current != nullptr) {
+        cout << current->ubi << " " << current->fecha << " " << current->punto_entrada << endl;
+        current = current->next;
     }
 
     string serieABuscar;
@@ -77,16 +75,20 @@ int main() {
 
     map<string, pair<int, int>> mesPorMes;
 
-    processRecords(mediterraneoList, serieABuscar, mesPorMes);
-    processRecords(marRojoList, serieABuscar, mesPorMes);
+    processRecords(mediterraneoList.head, serieABuscar, mesPorMes);
+    processRecords(marRojoList.head, serieABuscar, mesPorMes);
 
+    // Imprimir el mapa con la fecha que se encontró y la cantidad de entradas por cada punto de entrada
+    cout << "---------------------------------" << endl;
+    cout << "Mapa con la fecha que se encontro y la cantidad de entradas por cada punto de entrada:" << endl;
+    cout << "---------------------------------" << endl;
     for (const auto& entry : mesPorMes) {
         cout << entry.first << " " << entry.second.first << " " << entry.second.second << endl;
     }
 
     // Liberar la memoria de las listas
-    deleteList(mediterraneoList);
-    deleteList(marRojoList);
+    deleteList(mediterraneoList.head);
+    deleteList(marRojoList.head);
 
     return 0;
 }
