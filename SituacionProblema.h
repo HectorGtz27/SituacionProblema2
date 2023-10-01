@@ -1,4 +1,3 @@
-// SituacionProblema.h
 #pragma once
 
 #include <string>
@@ -34,6 +33,7 @@ public:
     }
 };
 
+
 bool compareRecords(const ShipRecord& a, const ShipRecord& b);
 
 void processRecords(ShipRecord* head, const std::string& serieABuscar, std::map<std::string, std::pair<int, int>>& mesPorMes);
@@ -43,3 +43,5 @@ void deleteList(ShipRecord*& head);
 ShipRecord* mergeSort(ShipRecord* head);
 
 ShipRecordList sortList(ShipRecordList& list);
+
+bool binarySearch(ShipRecord* head, const std::string& targetSerie);
