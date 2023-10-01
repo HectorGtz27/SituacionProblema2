@@ -1,4 +1,4 @@
-//main.cpp
+// main.cpp
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -87,17 +87,43 @@ int main() {
         cout << "---------------------------------" << endl;
         cout << "Mapa con la fecha que se encontro y la cantidad de entradas por cada punto de entrada:" << endl;
         cout << "---------------------------------" << endl;
-        for (const auto& entry : mesPorMes) {
-            cout << entry.first << " " << entry.second.first << " " << entry.second.second << endl;
+
+            
+        // Imprime solo la fecha y la cantidad de entradas por cada punto de entrada, la hora no se imprime
+        for (auto it = mesPorMes.begin(); it != mesPorMes.end(); it++) {
+            // Obtener la fecha eliminando la hora (suponiendo que la fecha tiene un formato fijo de 10 caracteres)
+            string fecha = it->first.substr(0, 10);
+
+            cout << fecha << " " << it->second.first << " " << it->second.second << endl;
         }
+
+        ListaEnlazada listaMesPorMes;
+
+        // Agregar los elementos de mesPorMes a listaMesPorMes
+		for (auto it = mesPorMes.begin(); it != mesPorMes.end(); it++) {
+			// Obtener la fecha eliminando la hora (suponiendo que la fecha tiene un formato fijo de 10 caracteres)
+			string fecha = it->first.substr(0, 10);
+
+			listaMesPorMes.agregar(fecha, it->second.first, it->second.second);
+		}
+
+        listaMesPorMes.imprimirCantidadEntradasPorMes();
+
+        // Liberar la memoria de listaMesPorMes
+        listaMesPorMes.~ListaEnlazada();
+        
+
     }
     else {
-        cout << "La serie especificada -> " << serieABuscar  << " no se encontro en los registros." << endl;
+        cout << "La serie especificada -> " << serieABuscar << " no se encontro en los registros." << endl;
     }
 
     // Liberar la memoria de las listas
     deleteList(mediterraneoList.head);
     deleteList(marRojoList.head);
+    
+
+    
 
     return 0;
 }
