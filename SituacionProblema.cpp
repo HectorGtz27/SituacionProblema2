@@ -161,6 +161,51 @@ void ListaEnlazada::imprimirCantidadEntradasPorMes() {
     std::cout << "Cantidad de Entradas de Buques por Mes:" << std::endl;
     std::cout << "M   A  CM CR" << std::endl;
     for (const auto& entry : cantidadPorMes) {
-        std::cout << entry.first << " " << entry.second.first << " " << entry.second.second << std::endl;
+        std::istringstream ss(entry.first);
+
+        std::string month, year;
+        ss >> month >> year;
+
+        if (month == "01") {
+            std::cout << "Jan ";
+        }
+        else if (month == "02") {
+            std::cout << "Feb ";
+        }
+        else if (month == "03") {
+            std::cout << "Mar ";
+        }
+        else if (month == "04") {
+            std::cout << "Apr ";
+        }
+        else if (month == "05") {
+            std::cout << "May ";
+        }
+        else if (month == "06") {
+            std::cout << "Jun ";
+        }
+        else if (month == "07") {
+            std::cout << "Jul ";
+        }
+        else if (month == "08") {
+            std::cout << "Aug ";
+        }
+        else if (month == "09") {
+            std::cout << "Sep ";
+        }
+        else if (month == "10") {
+            std::cout << "Oct ";
+        }
+        else if (month == "11") {
+            std::cout << "Nov ";
+        }
+        else {
+			std::cout << "Dec ";
+		}
+
+
+        //std::cout << entry.first << " "  << std::endl;
+        std::cout << year << " " << entry.second.first << " " << entry.second.second << std::endl;
     }
 }
+
