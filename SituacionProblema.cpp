@@ -6,6 +6,8 @@
 #include <string>
 #include <sstream>
 
+//compareEecords se utiliza para comparar dos registros de buques y ordenarlos por fecha y ubicacion en orden ascendente
+// 
 bool compareRecords(const ShipRecord& a, const ShipRecord& b) {
     int yearA, monthA, dayA;
     int yearB, monthB, dayB;
@@ -29,6 +31,11 @@ bool compareRecords(const ShipRecord& a, const ShipRecord& b) {
     }
 }
 
+//map es para realizar un seguimiento de la cantidad de entradas de buques por mes en funcion de una fecha dada
+// La clave del mapa es la fecha en formato "MM / AAAA" y el valor es un par de enteros que representan la cantidad de entradas de buques en el mediterraneo y el mar rojo respectivamente
+
+//La funcion processRecors es para procesar los registros de buques y actualizar el mapa con la cantidad de entradas de buques por mes
+// tambien sirve para verificar si la serie a buscar existe en la lista de registros de buques
 void processRecords(ShipRecord* head, const std::string& serieABuscar, std::map<std::string, std::pair<int, int>>& mesPorMes) {
     ShipRecord* current = head;
 
@@ -111,6 +118,7 @@ ShipRecord* mergeSort(ShipRecord* head) {
     return merge(left, right);
 }
 
+//La funcion sortList tiene una complejidad computacional de O (n log n) ya que utiliza el algoritmo de ordenacion de mezcla para ordenar la lista.
 ShipRecordList sortList(ShipRecordList& list) {
     ShipRecordList result;
     result.head = mergeSort(list.head);
@@ -121,25 +129,50 @@ ShipRecordList sortList(ShipRecordList& list) {
     return result;
 }
 
+//La funcion binarySearch tiene una complejidad computacional de O (log n) ya que la lista esta ordenada y se divide a la mitad en cada iteracion de la funcion. 
 bool binarySearch(ShipRecord* head, const std::string& targetSerie) {
-    ShipRecord* current = head;
-    while (current != nullptr) {
-        std::string currentSerie = current->ubi.substr(0, 3);
-        int compareResult = targetSerie.compare(currentSerie);
+    ShipRecord* left = head;
+    ShipRecord* right = nullptr;
 
-        if (compareResult == 0) {
+    while (left != right) {
+        ShipRecord* middle = left;
+        int count = 0;
+
+        // Avanzar 'middle' a la mitad de la lista
+        while (middle != right) {
+            middle = middle->next;
+            count++;
+        }
+
+        // Avanzar 'middle' a la mitad de la lista nuevamente
+        middle = left;
+        for (int i = 0; i < count / 2; i++) {
+            middle = middle->next;
+        }
+
+        // Verificar si 'middle' es el elemento deseado
+        if (middle->ubi.substr(0, 3) == targetSerie) {
             return true;
         }
-        else if (compareResult < 0) {
-            return false;
-        }
 
-        current = current->next;
+        // Actualizar 'left' y 'right' según la comparación
+        if (middle->ubi.substr(0, 3) < targetSerie) {
+            left = middle->next;
+        }
+        else {
+            right = middle;
+        }
+    }
+
+    // Verificar el último elemento (cuando la lista tiene un solo elemento)
+    if (left && left->ubi.substr(0, 3) == targetSerie) {
+        return true;
     }
 
     return false;
 }
 
+// La funcion imprimirCantidadEntradasPorMes tiene una complejidad computacional de O (n) ya que recorre la lista una vez para extraer el mes y el año de cada fecha y luego recorre el mapa una vez para imprimir la cantidad de entradas de buques por mes.
 void ListaEnlazada::imprimirCantidadEntradasPorMes() {
     // Implementación de la función imprimirCantidadEntradasPorMes
     std::map<std::string, std::pair<int, int>> cantidadPorMes;
@@ -208,4 +241,3 @@ void ListaEnlazada::imprimirCantidadEntradasPorMes() {
         std::cout << year << " " << entry.second.first << " " << entry.second.second << std::endl;
     }
 }
-
