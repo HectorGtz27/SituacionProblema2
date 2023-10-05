@@ -20,6 +20,16 @@ int main() {
         return 1;
     }
 
+    string linea2;
+
+    // Intentar leer una línea del archivo
+    if (!getline(archivo, linea2) || linea2.empty()) {
+        cerr << "El archivo esta vacio." << endl;
+        return 1;
+    }
+
+    
+
     ShipRecordList mediterraneoList;
     ShipRecordList marRojoList;
 
@@ -83,19 +93,6 @@ int main() {
         processRecords(mediterraneoList.head, serieABuscar, mesPorMes);
         processRecords(marRojoList.head, serieABuscar, mesPorMes);
 
-        // Imprimir el mapa con la fecha que se encontró y la cantidad de entradas por cada punto de entrada
-        cout << "---------------------------------" << endl;
-        cout << "Mapa con la fecha que se encontro y la cantidad de entradas por cada punto de entrada:" << endl;
-        cout << "---------------------------------" << endl;
-
-            
-        // Imprime solo la fecha y la cantidad de entradas por cada punto de entrada, la hora no se imprime
-        for (auto it = mesPorMes.begin(); it != mesPorMes.end(); it++) {
-            // Obtener la fecha eliminando la hora (suponiendo que la fecha tiene un formato fijo de 10 caracteres)
-            string fecha = it->first.substr(0, 10);
-
-            cout << fecha << " " << it->second.first << " " << it->second.second << endl;
-        }
 
         ListaEnlazada listaMesPorMes;
 
